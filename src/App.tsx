@@ -1,28 +1,11 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { motion } from 'motion/react';
+import { Github, Linkedin, Instagram } from 'lucide-react';
+import Home from './pages/Home';
+import ProjectDetail from './pages/ProjectDetail';
 
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'motion/react';
-import { 
-  Monitor, 
-  Smartphone, 
-  Package, 
-  Fingerprint, 
-  Instagram, 
-  Twitter, 
-  Linkedin, 
-  Dribbble,
-  ArrowUpRight
-} from 'lucide-react';
-
-// --- Components ---
+// --- Shared Layout Components ---
 
 const CustomCursor = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -71,457 +54,73 @@ const CustomCursor = () => {
   );
 };
 
+const BackgroundBlobs = () => (
+  <div className="fixed inset-0 overflow-hidden pointer-events-none z-[-1]">
+    <motion.div 
+      animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
+      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+      className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-blue-300/30 blur-[120px]"
+    />
+    <motion.div 
+      animate={{ scale: [1, 1.3, 1], rotate: [0, -90, 0] }}
+      transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+      className="absolute top-[40%] -right-[10%] w-[40%] h-[60%] rounded-full bg-purple-300/30 blur-[120px]"
+    />
+    <motion.div 
+      animate={{ scale: [1, 1.1, 1], rotate: [0, 45, 0] }}
+      transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+      className="absolute -bottom-[20%] left-[20%] w-[60%] h-[40%] rounded-full bg-blue-400/20 blur-[120px]"
+    />
+  </div>
+);
+
 const Nav = () => {
   return (
     <motion.nav 
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="fixed top-0 left-0 w-full z-50 px-6 py-6 flex justify-between items-center backdrop-blur-md"
+      className="fixed top-0 left-0 w-full z-50 px-6 py-6 flex justify-between items-center glass-panel"
     >
-      <div className="text-2xl font-editorial font-bold text-[var(--color-text-primary)]">Yastika.</div>
+      <Link to="/" className="text-2xl font-display font-bold text-[var(--color-text-primary)]">Yastika.</Link>
       
       <div className="hidden md:flex gap-8 items-center bg-[var(--color-text-primary)] rounded-full px-8 py-3 border border-[var(--color-border)]">
-        <a href="#hero" className="text-sm font-bold text-white hover:text-[var(--color-accent)] transition-colors">Home</a>
-        <a href="#services" className="text-sm font-bold text-white hover:text-[var(--color-accent)] transition-colors">Services</a>
-        <a href="#projects" className="text-sm font-bold text-white hover:text-[var(--color-accent)] transition-colors">Works</a>
-        <a href="#skills" className="text-sm font-bold text-white hover:text-[var(--color-accent)] transition-colors">Experience</a>
-        <a href="#footer" className="text-sm font-bold text-white hover:text-[var(--color-accent)] transition-colors">Contact</a>
+        <Link to="/" className="text-sm font-bold text-white hover:text-[var(--color-accent)] transition-colors">Home</Link>
+        <a href="/#services" className="text-sm font-bold text-white hover:text-[var(--color-accent)] transition-colors">Services</a>
+        <a href="/#projects" className="text-sm font-bold text-white hover:text-[var(--color-accent)] transition-colors">Works</a>
+        <a href="/#skills" className="text-sm font-bold text-white hover:text-[var(--color-accent)] transition-colors">Experience</a>
+        <a href="mailto:yastikaputragustiputu@gmail.com" className="text-sm font-bold text-white hover:text-[var(--color-accent)] transition-colors">Contact</a>
       </div>
 
-      <button className="bg-[var(--color-accent)] text-white px-8 py-3 rounded-full text-sm font-bold uppercase tracking-wider hover:shadow-[0_8px_30px_rgb(37,99,235,0.2)] transition-all duration-300">
+      <a href="mailto:yastikaputragustiputu@gmail.com" className="bg-[var(--color-accent)] text-white px-8 py-3 rounded-full text-sm font-bold uppercase tracking-wider hover:shadow-[0_8px_30px_rgb(37,99,235,0.2)] transition-all duration-300">
         Contact
-      </button>
+      </a>
     </motion.nav>
-  );
-};
-
-const SectionTitle = ({ children, subtitle }: { children: React.ReactNode, subtitle?: string }) => {
-  return (
-    <div className="mb-16 text-center">
-      {subtitle && <p className="text-xs uppercase tracking-[0.2em] text-[var(--color-text-muted)] font-bold mb-4">{subtitle}</p>}
-      <h2 className="text-4xl md:text-5xl">{children}</h2>
-    </div>
-  );
-};
-
-const Hero = () => {
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"]
-  });
-
-  const textY = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
-
-  return (
-    <section id="hero" ref={containerRef} className="relative min-h-screen flex flex-col items-center justify-center pt-24 pb-12 bg-white hero-gradient overflow-hidden">
-      {/* Background Large Text */}
-      <motion.div 
-        style={{ y: textY }}
-        className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
-      >
-        <span className="text-[20vw] md:text-[24vw] font-editorial text-blue-600 opacity-[0.05] whitespace-nowrap">
-          Hey, there
-        </span>
-      </motion.div>
-
-      <div className="container max-w-7xl mx-auto px-6 relative z-10 flex flex-col items-center">
-        {/* Status Badge */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-white border border-[var(--color-border)] px-5 py-2 rounded-full mb-8 flex items-center shadow-sm"
-        >
-          <span className="pulse-dot"></span>
-          <span className="text-xs font-bold uppercase tracking-wider text-[var(--color-text-secondary)]">Available for new opportunities</span>
-        </motion.div>
-
-        {/* Hero Main Content */}
-        <div className="relative flex flex-col items-center w-full">
-          <motion.h1 
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-[15vw] md:text-[10vw] font-editorial text-center leading-[0.8] z-20 text-blue-600"
-          >
-            Hey, there
-          </motion.h1>
-
-          <motion.div 
-            style={{ scale: imageScale }}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="relative w-full max-w-sm md:max-w-md aspect-[4/5] -mt-8 md:-mt-16 mb-8 group"
-          >
-            <div className="absolute inset-0 rounded-[2rem] border-2 border-[var(--color-accent)] transform rotate-3 scale-105 opacity-20 group-hover:rotate-0 transition-transform duration-700"></div>
-            <img 
-              src="/profile.png" 
-              alt="Gusti Putu Yastika Putra Profile"
-              className="w-full h-full object-cover rounded-[2rem] shadow-[0_45px_100px_-20px_rgba(37,99,235,0.15)] transition-transform duration-700"
-              referrerPolicy="no-referrer"
-              onError={(e) => {
-                e.currentTarget.src = "https://images.unsplash.com/photo-1519085115858-aae5b373547c?q=80&w=1000&auto=format&fit=crop";
-              }}
-            />
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="absolute left-0 bottom-0 max-w-[200px] hidden lg:block"
-          >
-            <p className="text-[3vw] font-bold leading-none mb-2 text-[var(--color-text-primary)]">I AM YASTIKA</p>
-            <p className="text-xs uppercase tracking-widest text-[var(--color-text-muted)]">Information Systems Engineer</p>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="absolute right-0 bottom-0 text-right max-w-[250px] hidden lg:block"
-          >
-            <p className="text-sm font-medium leading-relaxed text-[var(--color-text-secondary)]">
-              Specializing in Software Development, Data Analysis, and UI/UX Design Principles.
-            </p>
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const Services = () => {
-  const services = [
-    {
-      num: "01",
-      icon: <Monitor className="w-8 h-8" />,
-      title: "System Development",
-      desc: "Developing robust and scalable information systems with efficient workflow and document management."
-    },
-    {
-      num: "02",
-      icon: <Smartphone className="w-8 h-8" />,
-      title: "UI/UX Design",
-      desc: "Creating user-friendly, responsive layouts for tourism and blog platforms with focus on visual consistency."
-    },
-    {
-      num: "03",
-      icon: <Package className="w-8 h-8" />,
-      title: "SEO Specialist",
-      desc: "Optimizing search engine visibility through keyword research and effective content structuring."
-    },
-    {
-      num: "04",
-      icon: <Fingerprint className="w-8 h-8" />,
-      title: "Creative Writer",
-      desc: "Expressing ideas effectively through creative content, technical documentation, and professional articles."
-    }
-  ];
-
-  return (
-    <section id="services" className="py-32 bg-white text-[var(--color-text-primary)]">
-      <div className="container max-w-7xl mx-auto px-6">
-        <div className="space-y-4 mb-20 text-center">
-          <p className="text-xs uppercase tracking-[0.4em] text-[var(--color-text-muted)] font-bold">Capabilities</p>
-          <h2 className="text-5xl md:text-7xl font-editorial italic lowercase tracking-tight text-[var(--color-text-primary)]">I Can Help You With</h2>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {services.map((service, idx) => (
-            <motion.div 
-              key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              className="p-10 bg-blue-50/30 rounded-[2rem] border border-blue-100 flex flex-col gap-8 group hover:bg-[var(--color-accent)] transition-all duration-500"
-            >
-              <div className="flex justify-between items-start">
-                <span className="text-3xl font-editorial text-blue-200 group-hover:text-white transition-colors">{service.num}</span>
-                <div className="p-3 bg-white shadow-sm rounded-2xl group-hover:bg-white group-hover:text-[var(--color-accent)] transition-colors text-[var(--color-text-primary)]">
-                  {service.icon}
-                </div>
-              </div>
-              <div className="space-y-4">
-                <h3 className="text-xl font-bold tracking-tight text-[var(--color-text-primary)] group-hover:text-white transition-colors uppercase">{service.title}</h3>
-                <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed group-hover:text-white/80 transition-colors">{service.desc}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const StatsAndVision = () => {
-  return (
-    <section className="py-32 overflow-hidden bg-white text-[var(--color-text-primary)]">
-      <div className="container max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-          <motion.div
-             initial={{ opacity: 0, x: -50 }}
-             whileInView={{ opacity: 1, x: 0 }}
-             viewport={{ once: true }}
-             transition={{ duration: 0.8 }}
-          >
-            <h2 className="text-5xl md:text-7xl mb-12 leading-tight text-[var(--color-text-primary)] font-editorial italic lowercase">Turning My Vision Into Reality</h2>
-            <p className="text-[var(--color-text-secondary)] text-lg leading-relaxed max-w-lg">
-              Dedicated to creating impactful digital experiences through technical excellence and strategic design thinking.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-            className="relative"
-          >
-            <div className="aspect-video w-full bg-blue-50 rounded-[2.5rem] overflow-hidden shadow-[0_45px_100px_-20px_rgba(37,99,235,0.2)] relative group">
-              <img 
-                src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200&auto=format&fit=crop" 
-                alt="Workspace Background"
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-90"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-20 h-20 bg-[var(--color-accent)] rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform cursor-pointer">
-                  <ArrowUpRight className="w-10 h-10" />
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const Projects = () => {
-  const projects = [
-    { 
-      title: "Web Development - Contractor System", 
-      category: "Web Development", 
-      img: "/web1.png",
-      detailImg: "/web2.png",
-      desc: "Robust financial management system for construction firms, featuring automated budgeting and real-time project tracking."
-    },
-    { 
-      title: "Information Systems - Management Dashboard", 
-      category: "Web Development", 
-      img: "/web4.png",
-      detailImg: "/web3.png",
-      desc: "Advanced data visualization and management platform designed for high-efficiency system monitoring and reporting."
-    },
-    { 
-      title: "UI/UX Design - Mackfan", 
-      category: "UI/UX Design", 
-      img: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1200&auto=format&fit=crop",
-      desc: "An editorial e-commerce experience designed for premium product storytelling with a focus on seamless user journey and visual harmony."
-    },
-    { 
-      title: "Technical Writing & SEO", 
-      category: "Creative Writer", 
-      img: "https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=1200&auto=format&fit=crop",
-      desc: "In-depth technical documentation and strategic content creation optimized for both human readability and search engine ranking."
-    }
-  ];
-
-  return (
-    <section id="projects" className="py-32 bg-white text-[var(--color-text-primary)] overflow-hidden">
-      <div className="container max-w-7xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-32 gap-8">
-           <div className="space-y-4">
-             <p className="text-xs uppercase tracking-[0.4em] text-[var(--color-text-muted)] font-bold">Selected Works</p>
-             <h2 className="text-5xl md:text-8xl font-editorial italic lowercase tracking-tighter text-[var(--color-text-primary)]">Featured Work</h2>
-           </div>
-           <p className="text-[var(--color-text-secondary)] max-w-sm text-lg leading-relaxed">A selective look at my specialization across development, design, and strategic writing.</p>
-        </div>
-        
-        <div className="flex flex-col gap-40 md:gap-64">
-          {projects.map((project, idx) => (
-            <div key={idx} className="flex flex-col gap-12 md:gap-24">
-              <motion.div 
-                initial={{ opacity: 0, y: 100 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                className={`flex flex-col ${idx % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"} gap-12 md:gap-24 items-center`}
-              >
-                {/* Image Column */}
-                <div className="w-full md:w-3/5">
-                  <div className="relative aspect-[4/3] md:aspect-[16/10] overflow-hidden rounded-2xl group shadow-[0_30px_60px_-15px_rgba(37,99,235,0.1)] hover:shadow-[0_45px_100px_-20px_rgba(37,99,235,0.2)] transition-shadow duration-500">
-                    <motion.img 
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ duration: 1.2, ease: "circOut" }}
-                      src={project.img} 
-                      alt={project.title}
-                      className="w-full h-full object-contain transition-all duration-700 bg-gray-50/50"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="absolute inset-0 bg-blue-500/5 group-hover:bg-transparent transition-colors duration-500" />
-                  </div>
-                </div>
-
-                {/* Content Column */}
-                <div className="w-full md:w-2/5 space-y-8">
-                  <div className="space-y-4">
-                    <p className="text-xs uppercase tracking-[0.3em] text-[var(--color-accent)] font-black">0{idx + 1} — {project.category}</p>
-                    <h3 className="text-4xl md:text-6xl font-editorial italic lowercase tracking-tight leading-none text-[var(--color-text-primary)]">{project.title}</h3>
-                  </div>
-                  
-                  <p className="text-[var(--color-text-secondary)] text-lg md:text-xl leading-relaxed max-w-md">
-                    {project.desc}
-                  </p>
-
-                  <motion.button 
-                    whileHover={{ x: 10 }}
-                    className="flex items-center gap-4 group cursor-none"
-                  >
-                    <span className="text-sm uppercase tracking-widest font-bold border-b-2 border-[var(--color-text-primary)] pb-1">View Project</span>
-                    <div className="w-10 h-10 rounded-full border border-[var(--color-text-primary)] flex items-center justify-center group-hover:bg-[var(--color-accent)] group-hover:border-[var(--color-accent)] group-hover:text-white transition-all">
-                      <ArrowUpRight className="w-5 h-5" />
-                    </div>
-                  </motion.button>
-                </div>
-              </motion.div>
-
-              {project.detailImg && (
-                <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1, delay: 0.2 }}
-                  className="w-full mt-4"
-                >
-                  <p className="text-xs uppercase tracking-[0.4em] text-[var(--color-text-muted)] font-bold mb-8">System Detail</p>
-                  <div className="rounded-[2.5rem] overflow-hidden shadow-2xl bg-gray-50 border border-gray-100">
-                    <img 
-                      src={project.detailImg} 
-                      alt={`${project.title} Detail`}
-                      className="w-full h-auto object-contain block"
-                      referrerPolicy="no-referrer"
-                    />
-                  </div>
-                </motion.div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const Experience = () => {
-  const experiences = [
-    { year: "2022–Present", role: "Information Systems", tools: ["Python", "PHP", "MySQL", "Trello", "Excel"] },
-    { year: "2024–25", role: "Web & SEO", tools: ["On-page SEO", "Keyword Research", "Webflow", "HTML & CSS"] },
-    { year: "2023–24", role: "UI/UX Design", tools: ["Figma", "Canva", "Responsive Design", "Visual Consistency"] }
-  ];
-
-  return (
-    <section id="skills" className="py-32 bg-white text-[var(--color-text-primary)]">
-      <div className="container max-w-7xl mx-auto px-6">
-        <div className="space-y-4 mb-20 text-center">
-          <p className="text-xs uppercase tracking-[0.4em] text-[var(--color-text-muted)] font-bold">Timeline</p>
-          <h2 className="text-5xl md:text-7xl font-editorial italic lowercase tracking-tight text-[var(--color-text-primary)]">Experience & Skills</h2>
-        </div>
-        
-        <div className="flex flex-col">
-          {experiences.map((exp, idx) => (
-            <motion.div 
-              key={idx}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.2 }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-8 py-16 border-b border-blue-50 last:border-0 group transition-all duration-500"
-            >
-              <div className="text-2xl font-editorial text-blue-200 group-hover:text-[var(--color-text-primary)] transition-colors">{exp.year}</div>
-              <div className="text-3xl font-bold uppercase tracking-tighter text-[var(--color-text-primary)]">{exp.role}</div>
-              <div className="flex flex-wrap gap-3">
-                {exp.tools.map((tool, tIdx) => (
-                  <span key={tIdx} className="flex items-center text-sm font-medium bg-blue-50/50 px-4 py-2 rounded-full border border-blue-100 hover:border-[var(--color-accent)] transition-colors">
-                    <span className="w-1 h-1 bg-[var(--color-accent)] rounded-full mr-2"></span>
-                    {tool}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const WorkstationGallery = () => {
-  const photos = [
-    "https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1483058712412-4245e9b90334?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=800&auto=format&fit=crop"
-  ];
-
-  return (
-    <section id="workstation" className="py-32 overflow-hidden bg-white text-[var(--color-text-primary)]">
-      <div className="container max-w-7xl mx-auto px-6 mb-16">
-        <div className="space-y-4 mb-20">
-          <p className="text-xs uppercase tracking-[0.4em] text-[var(--color-text-muted)] font-bold">Environment</p>
-          <h2 className="text-5xl md:text-7xl font-editorial italic lowercase tracking-tight text-[var(--color-text-primary)]">My Workstation</h2>
-        </div>
-      </div>
-
-      <div className="flex gap-6 overflow-x-auto hide-scrollbar snap-x px-6">
-        {photos.map((photo, idx) => (
-          <motion.div 
-            key={idx}
-            whileHover={{ scale: 0.98 }}
-            className="flex-shrink-0 w-[400px] h-[500px] snap-center rounded-[2.5rem] overflow-hidden bg-blue-50 shadow-[0_20px_50px_rgba(37,99,235,0.1)]"
-          >
-            <img 
-              src={photo} 
-              alt={`Workspace view ${idx + 1}`}
-              className="w-full h-full object-cover transition-all duration-700"
-              referrerPolicy="no-referrer"
-            />
-          </motion.div>
-        ))}
-      </div>
-    </section>
   );
 };
 
 const Footer = () => {
   return (
-    <footer id="footer" className="bg-white py-32 border-t border-blue-50 text-[var(--color-text-primary)]">
+    <footer id="footer" className="bg-white py-32 border-t border-blue-50 text-[var(--color-text-primary)] relative z-10">
       <div className="container max-w-7xl mx-auto px-6 text-center">
         <motion.div
            initial={{ opacity: 0, y: 20 }}
            whileInView={{ opacity: 1, y: 0 }}
            viewport={{ once: true }}
         >
-          <h2 className="text-[12vw] md:text-[8vw] font-editorial mb-12 italic lowercase tracking-tight text-[var(--color-text-primary)]">Let's work together</h2>
+          <h2 className="text-[12vw] md:text-[8vw] font-display mb-12 italic lowercase tracking-tight text-[var(--color-text-primary)]">Let's work together</h2>
           
-          <button className="bg-[var(--color-accent)] text-white px-12 py-5 rounded-full text-lg font-bold uppercase tracking-widest hover:scale-105 active:scale-95 transition-transform mb-24">
+          <a href="mailto:yastikaputragustiputu@gmail.com" className="inline-block bg-[var(--color-accent)] text-white px-12 py-5 rounded-full text-lg font-bold uppercase tracking-widest hover:scale-105 active:scale-95 transition-transform mb-24">
             Send a Message
-          </button>
+          </a>
         </motion.div>
         
         <div className="flex flex-col md:flex-row justify-between items-center pt-24 gap-12 border-t border-blue-50">
-          <div className="text-2xl font-editorial font-bold text-[var(--color-text-primary)]">Yastika.</div>
+          <div className="text-2xl font-display font-bold text-[var(--color-text-primary)]">Yastika.</div>
           
           <div className="flex gap-8">
-            <a href="#" className="p-3 border border-blue-100 rounded-full hover:bg-[var(--color-accent)] hover:text-white transition-all text-blue-900/50"><Dribbble className="w-5 h-5" /></a>
-            <a href="#" className="p-3 border border-blue-100 rounded-full hover:bg-[var(--color-accent)] hover:text-white transition-all text-blue-900/50"><Linkedin className="w-5 h-5" /></a>
-            <a href="#" className="p-3 border border-blue-100 rounded-full hover:bg-[var(--color-accent)] hover:text-white transition-all text-blue-900/50"><Instagram className="w-5 h-5" /></a>
-            <a href="#" className="p-3 border border-blue-100 rounded-full hover:bg-[var(--color-accent)] hover:text-white transition-all text-blue-900/50"><Twitter className="w-5 h-5" /></a>
+            <a href="https://github.com/Yastikaputra" target="_blank" rel="noopener noreferrer" className="p-3 border border-blue-100 rounded-full hover:bg-[var(--color-accent)] hover:text-white transition-all text-blue-900/50"><Github className="w-5 h-5" /></a>
+            <a href="https://www.linkedin.com/in/gusti-putu-yastika-putra-718742270" target="_blank" rel="noopener noreferrer" className="p-3 border border-blue-100 rounded-full hover:bg-[var(--color-accent)] hover:text-white transition-all text-blue-900/50"><Linkedin className="w-5 h-5" /></a>
+            <a href="https://www.instagram.com/yastika07/" target="_blank" rel="noopener noreferrer" className="p-3 border border-blue-100 rounded-full hover:bg-[var(--color-accent)] hover:text-white transition-all text-blue-900/50"><Instagram className="w-5 h-5" /></a>
           </div>
           
           <p className="text-xs uppercase tracking-widest text-[var(--color-text-muted)]">
@@ -533,22 +132,25 @@ const Footer = () => {
   );
 };
 
-// --- Main App ---
+// --- Main App Setup ---
 
 export default function App() {
+  const location = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   return (
-    <div className="selection:bg-[var(--color-accent)] selection:text-white">
+    <div className="selection:bg-[var(--color-accent)] selection:text-white relative z-0">
+      <BackgroundBlobs />
       <CustomCursor />
       <Nav />
-      <main>
-        <Hero />
-        <Services />
-        <Projects />
-        <Experience />
-        <WorkstationGallery />
-      </main>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/project/:id" element={<ProjectDetail />} />
+      </Routes>
       <Footer />
     </div>
   );
 }
-
